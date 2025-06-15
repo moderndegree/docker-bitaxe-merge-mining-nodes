@@ -1,0 +1,98 @@
+# DigiByte Core Docker Image
+# ===================================================
+# This Dockerfile builds a secure DigiByte node container
+# Based on Ubuntu 22.04 with DigiByte Core v7.17.3
+
+FROM ubuntu:22.04
+
+# Build metadata
+LABEL maintainer="Bitcoin & DigiByte Docker Setup"
+LABEL description="DigiByte Core Node"
+LABEL version="7.17.3"
+
+# Avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Configuration arguments
+# ===================================================
+ARG ROOTDATADIR=/data
+ARG RPCUSERNAME=user
+ARG RPCPASSWORD=pass
+ARG VERSION=7.17.3
+ARG ARCH=x86_64
+
+# Network configuration (set to 1 for testnet, 0 for mainnet)
+ARG TESTNET=0
+
+# Blockchain pruning (set to 4096 for 4GB prune, 0 for no pruning)
+ARG PRUNESIZE=0
+
+# System setup
+# ===================================================
+# Install required packages and clean up to reduce image size
+RUN apt-get update && \
+    apt-get install -y wget && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /data
+
+# DigiByte Core installation
+# ===================================================
+# Download and extract DigiByte Core from official GitHub releases
+RUN wget -c https://github.com/DigiByte-Core/DigiByte/releases/download/v${VERSION}/digibyte-${VERSION}-${ARCH}-linux-gnu.tar.gz -O - | tar xz
+
+# Create blockchain data directory
+RUN mkdir -vp ${ROOTDATADIR}/.digibyte
+
+# Set up the volume for persistent blockchain data
+VOLUME ${ROOTDATADIR}/.digibyte
+
+# Expose network ports
+# ===================================================
+# Mainnet and testnet ports for P2P and RPC
+EXPOSE 12024 14022 14023 12026
+
+# Binary setup
+# ===================================================
+# Create symlinks for easier access to DigiByte binaries
+RUN ln -s ${ROOTDATADIR}/digibyte-${VERSION}/bin/digibyted /usr/bin/digibyted
+RUN ln -s ${ROOTDATADIR}/digibyte-${VERSION}/bin/digibyte-cli /usr/bin/digibyte-cli
+
+# Security setup
+# ===================================================
+# Create non-root user for running DigiByte node
+RUN useradd -r -m -s /bin/false digibyte && \
+    chown -R digibyte:digibyte ${ROOTDATADIR}
+
+# Switch to non-root user for security
+USER digibyte
+WORKDIR ${ROOTDATADIR}
+
+# Dynamic configuration script
+# ===================================================
+# Create startup script that generates config from environment variables
+# This allows runtime configuration without rebuilding the image
+RUN echo '#!/bin/bash' > /start-digibyte.sh && \
+    echo 'mkdir -p /data/.digibyte' >> /start-digibyte.sh && \
+    echo 'cat > /data/.digibyte/digibyte.conf << EOF' >> /start-digibyte.sh && \
+    echo 'datadir=/data/.digibyte/' >> /start-digibyte.sh && \
+    echo 'server=1' >> /start-digibyte.sh && \
+    echo 'rpcuser=${DGB_RPC_USER:-digibyte_user}' >> /start-digibyte.sh && \
+    echo 'rpcpassword=${DGB_RPC_PASSWORD:-digibyte_password}' >> /start-digibyte.sh && \
+    echo 'rpcport=${DGB_RPC_PORT:-14022}' >> /start-digibyte.sh && \
+    echo 'port=${DGB_P2P_PORT:-12024}' >> /start-digibyte.sh && \
+    echo 'rpcallowip=127.0.0.1' >> /start-digibyte.sh && \
+    echo 'rpcallowip=${RPC_ALLOW_IP:-172.20.0.0/16}' >> /start-digibyte.sh && \
+    echo 'maxconnections=${DGB_MAX_CONNECTIONS:-300}' >> /start-digibyte.sh && \
+    echo 'txindex=${TX_INDEX:-1}' >> /start-digibyte.sh && \
+    echo 'daemon=1' >> /start-digibyte.sh && \
+    echo 'testnet=${DGB_TESTNET:-0}' >> /start-digibyte.sh && \
+    echo 'EOF' >> /start-digibyte.sh && \
+    echo 'exec /usr/bin/digibyted' >> /start-digibyte.sh && \
+    chmod +x /start-digibyte.sh
+
+# Container startup
+# ===================================================
+# Start DigiByte daemon with dynamically generated configuration
+CMD ["/start-digibyte.sh"]

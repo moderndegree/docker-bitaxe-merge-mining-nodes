@@ -1,0 +1,109 @@
+# Bitcoin & DigiByte Node Docker Compose Configuration
+# ===================================================
+# This file defines the Docker services for running Bitcoin and DigiByte nodes
+# All configuration is driven by environment variables from your .env file
+
+version: '3.8'
+
+services:
+  # Bitcoin Core Node
+  # ===================================================
+  btc:
+    image: bitcoind:latest
+    container_name: btc-node
+    volumes:
+      - ./btc-data:/root/.bitcoin
+    ports:
+      - "${BTC_P2P_PORT:-8333}:${BTC_P2P_PORT:-8333}"   # P2P network port
+      - "${BTC_RPC_PORT:-8332}:${BTC_RPC_PORT:-8332}"   # RPC API port
+    restart: unless-stopped
+    networks:
+      - crypto-network
+    environment:
+      - BITCOIN_DATA=/root/.bitcoin
+      - BTC_RPC_USER=${BTC_RPC_USER:-bitcoin_user}
+      - BTC_RPC_PASSWORD=${BTC_RPC_PASSWORD:-bitcoin_password}
+      - BTC_RPC_PORT=${BTC_RPC_PORT:-8332}
+      - BTC_P2P_PORT=${BTC_P2P_PORT:-8333}
+      - BTC_TESTNET=${BTC_TESTNET:-0}
+      - RPC_ALLOW_IP=${RPC_ALLOW_IP:-172.20.0.0/16}
+      - BTC_MAX_CONNECTIONS=${BTC_MAX_CONNECTIONS:-125}
+      - TX_INDEX=${TX_INDEX:-1}
+    # Dynamic configuration generation from environment variables
+    command: >
+      sh -c "mkdir -p /root/.bitcoin &&
+             echo 'datadir=/root/.bitcoin/' > /root/.bitcoin/bitcoin.conf &&
+             echo 'server=1' >> /root/.bitcoin/bitcoin.conf &&
+             echo 'rpcuser=${BTC_RPC_USER:-bitcoin_user}' >> /root/.bitcoin/bitcoin.conf &&
+             echo 'rpcpassword=${BTC_RPC_PASSWORD:-bitcoin_password}' >> /root/.bitcoin/bitcoin.conf &&
+             echo 'rpcport=${BTC_RPC_PORT:-8332}' >> /root/.bitcoin/bitcoin.conf &&
+             echo 'port=${BTC_P2P_PORT:-8333}' >> /root/.bitcoin/bitcoin.conf &&
+             echo 'rpcallowip=127.0.0.1' >> /root/.bitcoin/bitcoin.conf &&
+             echo 'rpcallowip=${RPC_ALLOW_IP:-172.20.0.0/16}' >> /root/.bitcoin/bitcoin.conf &&
+             echo 'maxconnections=${BTC_MAX_CONNECTIONS:-125}' >> /root/.bitcoin/bitcoin.conf &&
+             echo 'txindex=${TX_INDEX:-1}' >> /root/.bitcoin/bitcoin.conf &&
+             echo 'daemon=1' >> /root/.bitcoin/bitcoin.conf &&
+             echo 'testnet=${BTC_TESTNET:-0}' >> /root/.bitcoin/bitcoin.conf &&
+             bitcoind"
+    healthcheck:
+      test: ["CMD", "bitcoin-cli", "-rpcuser=${BTC_RPC_USER:-bitcoin_user}", "-rpcpassword=${BTC_RPC_PASSWORD:-bitcoin_password}", "getblockchaininfo"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # DigiByte Core Node  
+  # ===================================================
+  dgb:
+    build:
+      context: .
+      dockerfile: Dockerfile.dgb
+    image: digibyte:latest
+    container_name: dgb-node
+    volumes:
+      - ./dgb-data:/data/.digibyte
+    ports:
+      - "${DGB_P2P_PORT:-12024}:${DGB_P2P_PORT:-12024}"  # P2P mainnet port
+      - "${DGB_RPC_PORT:-14022}:${DGB_RPC_PORT:-14022}"  # RPC mainnet port
+      - "12026:12026"  # P2P testnet port (static)
+      - "14023:14023"  # RPC testnet port (static)
+    restart: unless-stopped
+    networks:
+      - crypto-network
+    environment:
+      - DIGIBYTE_DATA=/data/.digibyte
+      - DGB_RPC_USER=${DGB_RPC_USER:-digibyte_user}
+      - DGB_RPC_PASSWORD=${DGB_RPC_PASSWORD:-digibyte_password}
+      - DGB_RPC_PORT=${DGB_RPC_PORT:-14022}
+      - DGB_P2P_PORT=${DGB_P2P_PORT:-12024}
+      - DGB_TESTNET=${DGB_TESTNET:-0}
+      - RPC_ALLOW_IP=${RPC_ALLOW_IP:-172.20.0.0/16}
+      - DGB_MAX_CONNECTIONS=${DGB_MAX_CONNECTIONS:-300}
+      - TX_INDEX=${TX_INDEX:-1}
+    healthcheck:
+      test: ["CMD", "digibyte-cli", "-rpcuser=${DGB_RPC_USER:-digibyte_user}", "-rpcpassword=${DGB_RPC_PASSWORD:-digibyte_password}", "getblockchaininfo"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+# Network Configuration
+# ===================================================
+networks:
+  crypto-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${NETWORK_SUBNET:-172.20.0.0/16}
+
+# Volume Configuration
+# ===================================================
+# Note: We use bind mounts (./btc-data, ./dgb-data) instead of named volumes
+# for easier access to blockchain data from the host system
+
+volumes:
+  btc-data:
+    driver: local
+  dgb-data:
+    driver: local
+

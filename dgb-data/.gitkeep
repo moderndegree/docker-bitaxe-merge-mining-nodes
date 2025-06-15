@@ -1,0 +1,3 @@
+# This file ensures the dgb-data directory is tracked by git
+# DigiByte blockchain data will be stored here when the node runs
+# This directory is mounted as a volume in the DigiByte container

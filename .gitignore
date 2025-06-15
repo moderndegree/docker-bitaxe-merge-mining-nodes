@@ -1,0 +1,31 @@
+# Environment files
+.env
+
+# Docker volumes data (but keep the directories)
+btc-data/*
+!btc-data/.gitkeep
+dgb-data/*
+!dgb-data/.gitkeep
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
