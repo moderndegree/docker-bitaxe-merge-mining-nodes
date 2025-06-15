@@ -6,7 +6,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Supported-blue.svg)](https://www.docker.com/)
 [![Bitcoin](https://img.shields.io/badge/Bitcoin-Core-orange.svg)](https://bitcoin.org/)
 [![DigiByte](https://img.shields.io/badge/DigiByte-Core-blue.svg)](https://digibyte.org/)
-[![Bitaxe](https://img.shields.io/badge/Bitaxe-Compatible-green.svg)](https://github.com/bitaxeorg/bitaxe)
+[![Bitaxe](https://img.shields.io/badge/Bitaxe-Compatible-green.svg)](https://bitaxe.org/)
 
 A secure, production-ready Docker setup for running Bitcoin and DigiByte nodes optimized for **Bitaxe gamma solo mining** with merge mining capabilities.
 
