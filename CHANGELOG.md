@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Docker Compose orchestration for both nodes with mining considerations
 - Health checks for service monitoring and mining reliability
 - Comprehensive documentation including Bitaxe Gamma setup and merge mining guides
+- Wallet setup script (`wallet-setup.sh`) for Coinbase integration
 - MIT License for open source sharing
 - Contributing guidelines for mining community
 - Security-focused design with non-root containers
@@ -21,12 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Features
 - **Bitaxe Gamma Solo Mining Support**: Optimized for BM1370-based miners (~1.2 TH/s)
 - **Merge Mining Ready**: Simultaneous Bitcoin and DigiByte mining capabilities
+- **DigiByte Core v8.22.2**: Latest stable release with improved fee estimation
 - **Secure Configuration**: Environment variables for all sensitive mining credentials
 - **Easy Management**: Single script for all mining node operations
 - **Docker Orchestration**: Complete setup with health monitoring for mining stability
 - **GitHub Ready**: Proper `.gitignore` and structure for open source mining projects
 - **Production Ready**: Optimized for both development and production mining setups
 - **Multi-Platform**: Supports Linux, macOS, and Windows (with WSL)
+- **Wallet Integration**: Built-in support for Coinbase and other wallet configurations
 
 ### Mining-Specific Features
 - **Solo Mining Configuration**: Direct node connection for independent mining
@@ -59,14 +62,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial project structure optimized for Bitaxe Gamma solo mining
 - Bitcoin Core node support with mining configuration
-- DigiByte Core node support (v7.17.3) with merge mining capability
+- DigiByte Core node support (v8.22.2) with merge mining capability
 - Environment variable configuration for mining credentials
 - Docker Compose orchestration for mining node reliability
 - Management script with mining-specific functionality
+- Wallet setup script for Coinbase and external wallet integration
 - Comprehensive mining documentation and licensing
+
+### Updated
+- DigiByte Core to v8.22.2 (latest stable release)
+- Improved fee estimation and fallback fee handling
+- Enhanced security with updated dependencies
 
 ---
 
 ## Version History
 
 - **v1.0.0** - Initial release with full Bitcoin and DigiByte solo mining support for Bitaxe Gamma (BM1370-based, ~1.2 TH/s)
+  - DigiByte Core v8.22.2 with improved fee estimation
+  - Comprehensive wallet integration support
+  - Production-ready Docker setup

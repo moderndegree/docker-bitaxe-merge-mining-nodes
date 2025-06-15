@@ -27,7 +27,7 @@ git clone https://github.com/moderndegree/docker-bitaxe-merge-mining-nodes.git
 cd docker-bitaxe-merge-mining-nodes
 
 # Make the script executable
-chmod +x manage-nodes.sh
+chmod +x manage-nodes.sh wallet-setup.sh
 
 # Set up your environment
 ./manage-nodes.sh setup-env
@@ -75,14 +75,17 @@ chmod +x manage-nodes.sh
 - Test on different operating systems (Linux, macOS, Windows with WSL)
 - Verify both Bitcoin and DigiByte nodes start correctly
 - Test all management script commands
-- Verify environment variable substitution works
+- Verify environment variable substitution works correctly
 - Test error conditions and edge cases
+- Validate all documented environment variables are functional
 
 ### Test Environment
 - Use testnet when possible for testing
 - Ensure clean shutdown of services
-- Test with different .env configurations
+- Test with different .env configurations (minimal, full, mixed)
 - Verify Docker health checks work
+- Test wallet address validation (if applicable)
+- Ensure RPC credentials work correctly
 
 ## 📝 Pull Request Process
 

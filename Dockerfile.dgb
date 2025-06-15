@@ -1,14 +1,14 @@
 # DigiByte Core Docker Image
 # ===================================================
 # This Dockerfile builds a secure DigiByte node container
-# Based on Ubuntu 22.04 with DigiByte Core v7.17.3
+# Based on Ubuntu 22.04 with DigiByte Core v8.22.2
 
 FROM ubuntu:22.04
 
 # Build metadata
 LABEL maintainer="Bitcoin & DigiByte Docker Setup"
 LABEL description="DigiByte Core Node"
-LABEL version="7.17.3"
+LABEL version="8.22.2"
 
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -18,7 +18,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ARG ROOTDATADIR=/data
 ARG RPCUSERNAME=user
 ARG RPCPASSWORD=pass
-ARG VERSION=7.17.3
+ARG VERSION=8.22.2
 ARG ARCH=x86_64
 
 # Network configuration (set to 1 for testnet, 0 for mainnet)
