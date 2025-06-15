@@ -65,10 +65,6 @@ RUN ln -s ${ROOTDATADIR}/digibyte-${VERSION}/bin/digibyte-cli /usr/bin/digibyte-
 RUN useradd -r -m -s /bin/false digibyte && \
     chown -R digibyte:digibyte ${ROOTDATADIR}
 
-# Switch to non-root user for security
-USER digibyte
-WORKDIR ${ROOTDATADIR}
-
 # Dynamic configuration script
 # ===================================================
 # Create startup script that generates config from environment variables
@@ -91,6 +87,10 @@ RUN echo '#!/bin/bash' > /start-digibyte.sh && \
     echo 'EOF' >> /start-digibyte.sh && \
     echo 'exec /usr/bin/digibyted' >> /start-digibyte.sh && \
     chmod +x /start-digibyte.sh
+
+# Switch to non-root user for security
+USER digibyte
+WORKDIR ${ROOTDATADIR}
 
 # Container startup
 # ===================================================

@@ -3,13 +3,11 @@
 # This file defines the Docker services for running Bitcoin and DigiByte nodes
 # All configuration is driven by environment variables from your .env file
 
-version: '3.8'
-
 services:
   # Bitcoin Core Node
   # ===================================================
   btc:
-    image: bitcoind:latest
+    image: bitcoin/bitcoin:latest
     container_name: btc-node
     volumes:
       - ./btc-data:/root/.bitcoin
@@ -42,7 +40,6 @@ services:
              echo 'rpcallowip=${RPC_ALLOW_IP:-172.20.0.0/16}' >> /root/.bitcoin/bitcoin.conf &&
              echo 'maxconnections=${BTC_MAX_CONNECTIONS:-125}' >> /root/.bitcoin/bitcoin.conf &&
              echo 'txindex=${TX_INDEX:-1}' >> /root/.bitcoin/bitcoin.conf &&
-             echo 'daemon=1' >> /root/.bitcoin/bitcoin.conf &&
              echo 'testnet=${BTC_TESTNET:-0}' >> /root/.bitcoin/bitcoin.conf &&
              bitcoind"
     healthcheck:
