@@ -112,8 +112,14 @@ show_env() {
     echo "  P2P Port: ${DGB_P2P_PORT:-12024}"
     echo "  Testnet: ${DGB_TESTNET:-0}"
     echo ""
+    echo "Wallet Configuration:"
+    echo "  Coinbase BTC Address: ${COINBASE_BTC_ADDRESS:-[not set]}"
+    echo "  Bitcoin Mining Address: ${BTC_MINING_ADDRESS:-[not set]}"
+    echo "  DigiByte Payout Address: ${DGB_PAYOUT_ADDRESS:-[not set]}"
+    echo ""
     echo "Network:"
     echo "  Subnet: ${NETWORK_SUBNET:-172.20.0.0/16}"
+    echo "  RPC Allow IP: ${RPC_ALLOW_IP:-172.20.0.0/16}"
 }
 
 # Function to build images

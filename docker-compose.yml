@@ -27,6 +27,8 @@ services:
       - RPC_ALLOW_IP=${RPC_ALLOW_IP:-172.20.0.0/16}
       - BTC_MAX_CONNECTIONS=${BTC_MAX_CONNECTIONS:-125}
       - TX_INDEX=${TX_INDEX:-1}
+      - COINBASE_BTC_ADDRESS=${COINBASE_BTC_ADDRESS:-}
+      - BTC_MINING_ADDRESS=${BTC_MINING_ADDRESS:-}
     # Dynamic configuration generation from environment variables
     command: >
       sh -c "mkdir -p /root/.bitcoin &&
@@ -41,6 +43,8 @@ services:
              echo 'maxconnections=${BTC_MAX_CONNECTIONS:-125}' >> /root/.bitcoin/bitcoin.conf &&
              echo 'txindex=${TX_INDEX:-1}' >> /root/.bitcoin/bitcoin.conf &&
              echo 'testnet=${BTC_TESTNET:-0}' >> /root/.bitcoin/bitcoin.conf &&
+             if [ -n '${COINBASE_BTC_ADDRESS}' ]; then echo 'addresstype=bech32' >> /root/.bitcoin/bitcoin.conf; fi &&
+             if [ -n '${BTC_MINING_ADDRESS}' ]; then echo '# Mining address: ${BTC_MINING_ADDRESS}' >> /root/.bitcoin/bitcoin.conf; fi &&
              bitcoind"
     healthcheck:
       test: ["CMD", "bitcoin-cli", "-rpcuser=${BTC_RPC_USER:-bitcoin_user}", "-rpcpassword=${BTC_RPC_PASSWORD:-bitcoin_password}", "getblockchaininfo"]
@@ -77,6 +81,7 @@ services:
       - RPC_ALLOW_IP=${RPC_ALLOW_IP:-172.20.0.0/16}
       - DGB_MAX_CONNECTIONS=${DGB_MAX_CONNECTIONS:-300}
       - TX_INDEX=${TX_INDEX:-1}
+      - DGB_PAYOUT_ADDRESS=${DGB_PAYOUT_ADDRESS:-}
     healthcheck:
       test: ["CMD", "digibyte-cli", "-rpcuser=${DGB_RPC_USER:-digibyte_user}", "-rpcpassword=${DGB_RPC_PASSWORD:-digibyte_password}", "getblockchaininfo"]
       interval: 30s

@@ -84,6 +84,7 @@ RUN echo '#!/bin/bash' > /start-digibyte.sh && \
     echo 'txindex=${TX_INDEX:-1}' >> /start-digibyte.sh && \
     echo 'daemon=1' >> /start-digibyte.sh && \
     echo 'testnet=${DGB_TESTNET:-0}' >> /start-digibyte.sh && \
+    echo 'if [ -n "${DGB_PAYOUT_ADDRESS}" ]; then echo "# DigiByte payout address: ${DGB_PAYOUT_ADDRESS}" >> /data/.digibyte/digibyte.conf; fi' >> /start-digibyte.sh && \
     echo 'EOF' >> /start-digibyte.sh && \
     echo 'exec /usr/bin/digibyted' >> /start-digibyte.sh && \
     chmod +x /start-digibyte.sh

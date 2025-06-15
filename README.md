@@ -325,6 +325,56 @@ Once started, the services will be available at:
 ./manage-nodes.sh dgb-cli getbestblockhash
 ```
 
+## 💰 Coinbase Wallet Integration
+
+### Important Limitations
+- **Coinbase does NOT support DigiByte (DGB)** - you'll need a separate wallet
+- **Solo mining probability is extremely low** with 1.2 TH/s hashrate
+- **Block rewards are substantial** (~6.25 BTC ≈ $150k+) but very rare to find
+
+### Setup Coinbase Integration
+```bash
+# Run the wallet setup script
+./wallet-setup.sh setup
+
+# View current wallet configuration
+./wallet-setup.sh show
+
+# Test node connectivity
+./wallet-setup.sh test
+```
+
+### Manual Configuration
+If you prefer manual setup, add these to your `.env` file:
+
+```bash
+# Get this from Coinbase: Portfolio → Bitcoin → Receive
+COINBASE_BTC_ADDRESS=bc1qexample...your...address...here
+
+# For DigiByte, use a wallet that supports DGB:
+# - Exodus Wallet (recommended)
+# - Trust Wallet  
+# - DigiByte Core Wallet
+DGB_PAYOUT_ADDRESS=Dexample...your...dgb...address...here
+```
+
+### Recommended DigiByte Wallets (Since Coinbase doesn't support DGB)
+| Wallet | Platform | Features |
+|--------|----------|----------|
+| **Exodus** | Desktop/Mobile | User-friendly, built-in exchange |
+| **Trust Wallet** | Mobile | Multi-currency, DeFi support |
+| **DigiByte Core** | Desktop | Official wallet, full node |
+| **Atomic Wallet** | Desktop/Mobile | Multi-currency, atomic swaps |
+
+### Mining Probability Reality Check
+With a Bitaxe Gamma (1.2 TH/s):
+- **Bitcoin Network**: ~500 EH/s (500,000,000 TH/s)
+- **Your Share**: 0.0000024% of network hashrate
+- **Expected Time**: ~200,000 years per block (statistically)
+- **Purpose**: Learning, network support, lottery ticket mentality
+
+**Consider pool mining for regular payouts instead of solo mining.**
+
 ### Wallet Operations (Optional)
 ```bash
 # Create a new wallet for mining rewards
