@@ -62,8 +62,8 @@ RUN ln -s ${ROOTDATADIR}/digibyte-${VERSION}/bin/digibyte-cli /usr/bin/digibyte-
 # Security setup
 # ===================================================
 # Create non-root user for running DigiByte node
-RUN useradd -r -m -s /bin/false digibyte && \
-    chown -R digibyte:digibyte ${ROOTDATADIR}
+# RUN useradd -r -m -s /bin/false digibyte && \
+#     chown -R digibyte:digibyte ${ROOTDATADIR}
 
 # Dynamic configuration script
 # ===================================================
@@ -77,20 +77,20 @@ RUN echo '#!/bin/bash' > /start-digibyte.sh && \
     echo 'rpcuser=${DGB_RPC_USER:-digibyte_user}' >> /start-digibyte.sh && \
     echo 'rpcpassword=${DGB_RPC_PASSWORD:-digibyte_password}' >> /start-digibyte.sh && \
     echo 'rpcport=${DGB_RPC_PORT:-14022}' >> /start-digibyte.sh && \
+    echo 'rpcbind=0.0.0.0:${DGB_RPC_PORT:-14022}' >> /start-digibyte.sh && \
     echo 'port=${DGB_P2P_PORT:-12024}' >> /start-digibyte.sh && \
     echo 'rpcallowip=127.0.0.1' >> /start-digibyte.sh && \
     echo 'rpcallowip=${RPC_ALLOW_IP:-172.20.0.0/16}' >> /start-digibyte.sh && \
     echo 'maxconnections=${DGB_MAX_CONNECTIONS:-300}' >> /start-digibyte.sh && \
     echo 'txindex=${TX_INDEX:-1}' >> /start-digibyte.sh && \
-    echo 'daemon=1' >> /start-digibyte.sh && \
     echo 'testnet=${DGB_TESTNET:-0}' >> /start-digibyte.sh && \
-    echo 'if [ -n "${DGB_PAYOUT_ADDRESS}" ]; then echo "# DigiByte payout address: ${DGB_PAYOUT_ADDRESS}" >> /data/.digibyte/digibyte.conf; fi' >> /start-digibyte.sh && \
     echo 'EOF' >> /start-digibyte.sh && \
-    echo 'exec /usr/bin/digibyted' >> /start-digibyte.sh && \
+    echo 'if [ -n "${DGB_PAYOUT_ADDRESS}" ]; then echo "# DigiByte payout address: ${DGB_PAYOUT_ADDRESS}" >> /data/.digibyte/digibyte.conf; fi' >> /start-digibyte.sh && \
+    echo 'exec /usr/bin/digibyted -conf=/data/.digibyte/digibyte.conf' >> /start-digibyte.sh && \
     chmod +x /start-digibyte.sh
 
 # Switch to non-root user for security
-USER digibyte
+# USER digibyte
 WORKDIR ${ROOTDATADIR}
 
 # Container startup
